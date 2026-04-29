@@ -143,7 +143,7 @@ CD32 Host (Amiga chipset)
 
 ---
 
-## Porting status
+## Status
 
 | Module             | File                  | Status                        |
 |:-------------------|:----------------------|:------------------------------|
@@ -163,29 +163,5 @@ CD32 Host (Amiga chipset)
 | Play module        | `core/play.c`         | ✅ Complete                   |
 | Service module     | `core/service.c`      | ✅ Complete                   |
 
-All modules are ported.  The firmware compiles and links with no stubs.
 
----
 
-## Key changes from the original 8051 source
-
-| Issue in original                          | Fix applied                                           |
-|:-------------------------------------------|:------------------------------------------------------|
-| `EA = 1`, `EX0 = TRUE` (8051 SFRs)        | Replaced with Pico SDK `gpio_set_irq_enabled_with_callback()` |
-| `bit` type keyword                         | Replaced with `uint8_t` / `int`                      |
-| `idat` / `rom` storage class modifiers     | Removed / mapped to `const`                          |
-| Duplicate `main()` in mainloop.c & main.c  | Single `main.c` entry point                          |
-| Broken `CMakeLists.txt` (4 of 12 sources)  | Corrected; all sources listed with correct paths     |
-| `defs.h` and `gendef.h` duplicated         | Unified into `include/defs.h`                        |
-| Missing closing brace in `commo.c`         | State machine fully closed and restructured          |
-| Mixed 8051 + C99 fragments in `player.c`   | Rewritten as a clean process dispatch table          |
-| Three competing `timer_init()` in timer.c  | Single implementation with Pico repeating_timer API  |
-| `SIDA()` used as input and output with no  | GPIO direction switched explicitly before each       |
-| direction switching                        | read/write operation                                 |
-| `PIN_SCOR` missing from `gpio_map.h`       | Added; COMMO pins also added                         |
-| `time_t` clashed with POSIX `<time.h>`     | Renamed to `cd_time_t` throughout                    |
-| `ERROR` macro clashed with system headers  | Renamed to `CD_ERROR_STATE`                          |
-| `processes.c` empty but included           | Removed from build; process table lives in player.c  |
-| Sub-module calls in `player.c` used        | Replaced static wrappers with top-level `extern`     |
-| recursive `static` wrappers with inner     | declarations; removed dead static busy-flag copies   |
-| `extern` declarations (infinite recursion) | that were disconnected from the module variables     |
